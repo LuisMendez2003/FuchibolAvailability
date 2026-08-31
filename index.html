@@ -1,160 +1,612 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>¿Cuándo quedamos? — Disponibilidad de eventos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Organizador de eventos de Luis</title>
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <div class="app">
 
+    <!-- ===================== HEADER ===================== -->
+
     <header class="topbar">
+
       <div class="brand">
-        <span class="brand-ball" id="brandIcon">⚽</span>
-        <h1 id="brandTitle">¿Cuándo quedamos?</h1>
+
+        <span
+          class="brand-ball"
+          id="brandIcon"
+        >
+          ⚽
+        </span>
+
+        <h1 id="brandTitle">
+          Organizador de eventos de Luis
+        </h1>
+
       </div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">
+
+      <button
+        id="themeToggle"
+        class="theme-toggle"
+        aria-label="Cambiar tema"
+        title="Cambiar tema claro/oscuro"
+      >
         <span class="theme-icon sun">☀️</span>
         <span class="theme-icon moon">🌙</span>
       </button>
+
     </header>
 
-    <!-- ===================== PANTALLA: LISTA DE EVENTOS ===================== -->
-    <main id="eventsScreen" class="content">
+
+    <!-- ===================== LISTA DE EVENTOS ===================== -->
+
+    <main
+      id="eventsScreen"
+      class="content"
+    >
+
       <section class="events-header">
-        <h2>Tus eventos</h2>
-        <p class="events-sub">Crea un evento por cada plan (fútbol de septiembre, salida al cine, etc.) y cada uno tiene su propio calendario.</p>
+
+        <h2>
+          Tus eventos
+        </h2>
+
+        <p class="events-sub">
+          Crea un evento por cada plan y
+          organiza fácilmente cuándo puede
+          cada persona.
+        </p>
+
       </section>
 
-      <section id="eventsList" class="events-list"></section>
-      <p id="eventsEmptyHint" class="empty-hint hidden">Todavía no hay eventos. ¡Crea el primero!</p>
+      <section
+        id="eventsList"
+        class="events-list"
+      ></section>
+
+      <p
+        id="eventsEmptyHint"
+        class="empty-hint hidden"
+      >
+        Todavía no hay eventos.
+        ¡Crea el primero!
+      </p>
+
     </main>
 
-    <!-- ===================== PANTALLA: CALENDARIO DE UN EVENTO ===================== -->
-    <main id="eventScreen" class="content hidden">
 
-      <button id="backToEvents" class="back-link">‹ Todos los eventos</button>
-      <h2 id="eventTitle" class="event-title">—</h2>
+    <!-- ===================== EVENTO ===================== -->
+
+    <main
+      id="eventScreen"
+      class="content hidden"
+    >
+
+      <button
+        id="backToEvents"
+        class="back-link"
+      >
+        ‹ Todos los eventos
+      </button>
+
+
+      <h2
+        id="eventTitle"
+        class="event-title"
+      >
+        —
+      </h2>
+
 
       <section class="month-nav">
-        <button id="prevMonth" class="nav-btn" aria-label="Mes anterior">‹</button>
-        <h2 id="monthLabel">Septiembre 2026</h2>
-        <button id="nextMonth" class="nav-btn" aria-label="Mes siguiente">›</button>
+
+        <button
+          id="prevMonth"
+          class="nav-btn"
+          aria-label="Mes anterior"
+        >
+          ‹
+        </button>
+
+        <h2 id="monthLabel">
+          Septiembre 2026
+        </h2>
+
+        <button
+          id="nextMonth"
+          class="nav-btn"
+          aria-label="Mes siguiente"
+        >
+          ›
+        </button>
+
       </section>
+
 
       <section class="legend">
-        <span class="legend-item"><i class="dot dot-available"></i> Más gente libre</span>
-        <span class="legend-item"><i class="dot dot-unavailable"></i> Poca gente libre</span>
-        <span class="legend-item"><i class="dot dot-empty"></i> Sin respuestas</span>
+
+        <span class="legend-item">
+          <i class="dot dot-available"></i>
+          Más gente libre
+        </span>
+
+        <span class="legend-item">
+          <i class="dot dot-unavailable"></i>
+          Poca gente libre
+        </span>
+
+        <span class="legend-item">
+          <i class="dot dot-empty"></i>
+          Sin respuestas
+        </span>
+
       </section>
+
+
+      <!-- CALENDARIO -->
 
       <section class="calendar-card">
+
         <div class="weekdays">
-          <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          <span>L</span>
+          <span>M</span>
+          <span>M</span>
+          <span>J</span>
+          <span>V</span>
+          <span>S</span>
+          <span>D</span>
         </div>
-        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <div
+          id="calendarGrid"
+          class="calendar-grid"
+        ></div>
+
       </section>
 
-      <section id="bestDateCard" class="best-date-card hidden">
-        <div class="best-date-label">Mejor fecha para este evento</div>
-        <div id="bestDateValue" class="best-date-value">—</div>
-        <div id="bestDateSub" class="best-date-sub"></div>
+
+      <!-- MEJOR FECHA -->
+
+      <section
+        id="bestDateCard"
+        class="best-date-card hidden"
+      >
+
+        <div class="best-date-label">
+          Mejor fecha para este evento
+        </div>
+
+        <div
+          id="bestDateValue"
+          class="best-date-value"
+        >
+          —
+        </div>
+
+        <div
+          id="bestDateSub"
+          class="best-date-sub"
+        ></div>
+
       </section>
+
+
+      <!-- PARTICIPANTES -->
 
       <section class="participants-card">
+
         <div class="participants-header">
-          <h3>Quiénes ya respondieron</h3>
-          <span id="participantsCount" class="participants-count">0</span>
+
+          <h3>
+            Quiénes ya respondieron
+          </h3>
+
+          <span
+            id="participantsCount"
+            class="participants-count"
+          >
+            0
+          </span>
+
         </div>
-        <div id="participantsList" class="participants-list"></div>
+
+        <div
+          id="participantsList"
+          class="participants-list"
+        ></div>
+
       </section>
 
     </main>
 
-    <button id="openAddAvailability" class="fab hidden">
-      <span class="fab-plus">+</span> Añadir disponibilidad
+
+    <!-- ===================== BOTONES FLOTANTES ===================== -->
+
+    <button
+      id="openAddAvailability"
+      class="fab hidden"
+    >
+      <span class="fab-plus">+</span>
+      Añadir disponibilidad
     </button>
 
-    <button id="openCreateEvent" class="fab">
-      <span class="fab-plus">+</span> Crear evento
+
+    <button
+      id="openCreateEvent"
+      class="fab"
+    >
+      <span class="fab-plus">+</span>
+      Crear evento
     </button>
 
   </div>
 
-  <!-- Modal: crear evento -->
-  <div id="eventModalOverlay" class="modal-overlay hidden">
+
+  <!-- ========================================================= -->
+  <!-- MODAL: CREAR EVENTO -->
+  <!-- ========================================================= -->
+
+  <div
+    id="eventModalOverlay"
+    class="modal-overlay hidden"
+  >
+
     <div class="modal small-modal">
+
       <div class="modal-header">
-        <h3>Nuevo evento</h3>
-        <button id="closeEventModal" class="modal-close" aria-label="Cerrar">✕</button>
+
+        <h3>
+          Nuevo evento
+        </h3>
+
+        <button
+          id="closeEventModal"
+          class="modal-close"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+
       </div>
+
+
       <div class="modal-body">
-        <label class="field-label" for="eventNameInput">Nombre del evento</label>
-        <input id="eventNameInput" class="name-input" type="text" placeholder="Ej. Fútbol de octubre" maxlength="60" />
+
+        <label
+          class="field-label"
+          for="eventNameInput"
+        >
+          Nombre del evento
+        </label>
+
+        <input
+          id="eventNameInput"
+          class="name-input"
+          type="text"
+          placeholder="Ej. Fútbol de septiembre"
+          maxlength="60"
+        />
+
+
+        <div class="date-range-fields">
+
+          <div>
+
+            <label
+              class="field-label"
+              for="eventStartDateInput"
+            >
+              Desde
+            </label>
+
+            <input
+              id="eventStartDateInput"
+              class="name-input"
+              type="date"
+            />
+
+          </div>
+
+
+          <div>
+
+            <label
+              class="field-label"
+              for="eventEndDateInput"
+            >
+              Hasta
+            </label>
+
+            <input
+              id="eventEndDateInput"
+              class="name-input"
+              type="date"
+            />
+
+          </div>
+
+        </div>
+
+
+        <p class="field-hint">
+          El rango es opcional. Si lo defines,
+          nadie podrá marcar fechas fuera de él.
+        </p>
+
       </div>
+
+
       <div class="modal-footer">
-        <button id="createEventBtn" class="save-btn">Crear evento</button>
-        <div id="createEventStatus" class="save-status"></div>
+
+        <button
+          id="createEventBtn"
+          class="save-btn"
+        >
+          Crear evento
+        </button>
+
+        <div
+          id="createEventStatus"
+          class="save-status"
+        ></div>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- Modal: añadir disponibilidad -->
-  <div id="modalOverlay" class="modal-overlay hidden">
+
+  <!-- ========================================================= -->
+  <!-- MODAL: AÑADIR DISPONIBILIDAD -->
+  <!-- ========================================================= -->
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay hidden"
+  >
+
     <div class="modal">
+
       <div class="modal-header">
-        <h3>Marca tus fechas</h3>
-        <button id="closeModal" class="modal-close" aria-label="Cerrar">✕</button>
+
+        <h3>
+          Marca tus fechas
+        </h3>
+
+        <button
+          id="closeModal"
+          class="modal-close"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+
       </div>
 
+
       <div class="modal-body">
-        <label class="field-label" for="nameInput">Tu nombre</label>
-        <input id="nameInput" class="name-input" type="text" placeholder="Ej. Luis German Wambrillo" maxlength="60" />
+
+        <label
+          class="field-label"
+          for="nameInput"
+        >
+          Tu nombre
+        </label>
+
+        <input
+          id="nameInput"
+          class="name-input"
+          type="text"
+          placeholder="Ej. Luis German Wambrillo"
+          maxlength="60"
+        />
+
 
         <div class="modal-instructions">
-          Toca cada día para marcarlo: <strong class="txt-available">disponible</strong> →
-          <strong class="txt-unavailable">no disponible</strong> → sin marcar.
+
+          Toca cada día para marcarlo:
+
+          <strong class="txt-available">
+            disponible
+          </strong>
+          →
+
+          <strong class="txt-unavailable">
+            no disponible
+          </strong>
+          →
+
+          sin marcar.
+
         </div>
+
 
         <div class="modal-month-nav">
-          <button id="modalPrevMonth" class="nav-btn small" aria-label="Mes anterior">‹</button>
-          <span id="modalMonthLabel">Septiembre 2026</span>
-          <button id="modalNextMonth" class="nav-btn small" aria-label="Mes siguiente">›</button>
+
+          <button
+            id="modalPrevMonth"
+            class="nav-btn small"
+            aria-label="Mes anterior"
+          >
+            ‹
+          </button>
+
+          <span id="modalMonthLabel">
+            Septiembre 2026
+          </span>
+
+          <button
+            id="modalNextMonth"
+            class="nav-btn small"
+            aria-label="Mes siguiente"
+          >
+            ›
+          </button>
+
         </div>
+
 
         <div class="weekdays">
-          <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+
+          <span>L</span>
+          <span>M</span>
+          <span>M</span>
+          <span>J</span>
+          <span>V</span>
+          <span>S</span>
+          <span>D</span>
+
         </div>
-        <div id="modalCalendarGrid" class="calendar-grid"></div>
+
+
+        <div
+          id="modalCalendarGrid"
+          class="calendar-grid"
+        ></div>
+
       </div>
+
 
       <div class="modal-footer">
-        <button id="saveAvailability" class="save-btn">Guardar disponibilidad</button>
-        <div id="saveStatus" class="save-status"></div>
+
+        <button
+          id="saveAvailability"
+          class="save-btn"
+        >
+          Guardar disponibilidad
+        </button>
+
+        <div
+          id="saveStatus"
+          class="save-status"
+        ></div>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- Modal: detalle de disponibilidad de una persona -->
-  <div id="personModalOverlay" class="modal-overlay hidden">
+
+  <!-- ========================================================= -->
+  <!-- MODAL: PERSONA -->
+  <!-- ========================================================= -->
+
+  <div
+    id="personModalOverlay"
+    class="modal-overlay hidden"
+  >
+
     <div class="modal small-modal">
+
       <div class="modal-header">
-        <h3 id="personModalName">—</h3>
-        <button id="closePersonModal" class="modal-close" aria-label="Cerrar">✕</button>
+
+        <h3 id="personModalName">
+          —
+        </h3>
+
+        <button
+          id="closePersonModal"
+          class="modal-close"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+
       </div>
+
+
       <div class="modal-body">
-        <div id="personModalBody"></div>
+
+        <div
+          id="personModalBody"
+        ></div>
+
       </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          id="deletePersonAvailabilityBtn"
+          class="danger-btn"
+        >
+          Eliminar disponibilidad
+        </button>
+
+      </div>
+
     </div>
+
   </div>
+
+
+  <!-- ========================================================= -->
+  <!-- MODAL: DETALLE DE FECHA -->
+  <!-- ========================================================= -->
+
+  <div
+    id="dateModalOverlay"
+    class="modal-overlay hidden"
+  >
+
+    <div class="modal small-modal">
+
+      <div class="modal-header">
+
+        <h3 id="dateModalTitle">
+          —
+        </h3>
+
+        <button
+          id="closeDateModal"
+          class="modal-close"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div
+          id="dateModalBody"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================== SCRIPTS ===================== -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script src="config.js"></script>
+
   <script src="app.js"></script>
+
 </body>
 </html>
