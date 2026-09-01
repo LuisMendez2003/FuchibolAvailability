@@ -1,6 +1,6 @@
-// Keeps the cached event data fresh without blocking month navigation.
-// app.js renders the cached month immediately; this file revalidates the
-// shared Supabase data in the background and updates the UI only on changes.
+// Mantiene fresco el cache del evento sin bloquear la navegación entre meses.
+// app.js pinta el mes cacheado inmediatamente; este archivo revalida los datos
+// compartidos de Supabase en segundo plano y actualiza la UI solo si cambiaron.
 
 (function initCalendarSync() {
   let revalidateTimer = null;
@@ -63,8 +63,8 @@
       return;
     }
 
-    // Background refreshes must never replace a valid cached calendar with
-    // an error state. The next interaction can try again.
+    // Un refresco en segundo plano nunca debe reemplazar un calendario válido
+    // por un estado de error. La siguiente interacción podrá reintentarlo.
     if (error) {
       console.error("Error revalidando disponibilidad:", error);
       return;
@@ -121,8 +121,8 @@
     }, 120);
   }
 
-  // The handlers in app.js run first and render the requested month from the
-  // cache synchronously. We then refresh shared data without showing a loader.
+  // Los handlers de app.js se ejecutan primero y pintan el mes solicitado
+  // desde el cache. Luego refrescamos los datos compartidos sin mostrar loader.
   document
     .getElementById("prevMonth")
     .addEventListener("click", scheduleRevalidation);
@@ -131,17 +131,16 @@
     .getElementById("nextMonth")
     .addEventListener("click", scheduleRevalidation);
 
-  // Refresh when the user returns to the tab, which is useful while several
-  // people are editing the same event from different devices.
+  // Refresca al volver a la pestaña, útil cuando varias personas editan el
+  // mismo evento desde dispositivos diferentes.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       scheduleRevalidation();
     }
   });
 
-  // openDateModal already reads fresh rows from Supabase. Ignore the cached
-  // snapshot passed by the calendar cell so stale and fresh statuses can never
-  // be combined in the same modal.
+  // openDateModal ya consulta filas frescas en Supabase. Ignoramos el snapshot
+  // cacheado de la celda para no mezclar estados antiguos y nuevos en el modal.
   const openDateModalWithFreshData = openDateModal;
 
   openDateModal = function openFreshDateModal(date) {
