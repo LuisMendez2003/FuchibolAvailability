@@ -264,14 +264,28 @@ let modalMonth;
 let mySelections = {};
 let currentPersonName = "";
 
+// Cache de disponibilidad del evento actual. La navegación entre meses
+// reutiliza estos datos y no vuelve a consultar Supabase.
+let cachedPerDate = {};
+let cachedPeople = new Set();
+let cachedEventId = null;
 
-// Token para evitar el bug de renders duplicados.
-// Si una petición vieja termina después de una nueva,
-// simplemente se ignora.
+// Token para evitar que una petición vieja pinte datos después de una nueva.
 let monthLoadToken = 0;
 
 
+function resetEventDataCache() {
+  cachedPerDate = {};
+  cachedPeople = new Set();
+  cachedEventId = null;
+}
+
+
 function showEventsScreen() {
+  // Invalida cualquier carga pendiente del evento que se estaba mostrando.
+  monthLoadToken++;
+  resetEventDataCache();
+
   currentEventId = null;
   currentEventName = "";
   currentEventStartDate = null;
@@ -300,6 +314,12 @@ async function showEventScreen(
   startDate = null,
   endDate = null
 ) {
+  if (currentEventId !== id) {
+    // Evita reutilizar datos de otro evento mientras carga el nuevo.
+    monthLoadToken++;
+    resetEventDataCache();
+  }
+
   currentEventId = id;
   currentEventName = name;
 
@@ -703,7 +723,9 @@ function changeMonth(delta) {
   viewMonth = newMonth;
   viewYear = newYear;
 
-  loadMonthData();
+  // Cambiar de mes solo cambia la vista. Los datos del evento ya están
+  // cacheados y se refrescan únicamente cuando realmente cambian.
+  renderCurrentMonth();
 }
 
 
@@ -732,17 +754,29 @@ function updateMainNavigation() {
 }
 
 
+function renderCurrentMonth() {
+  monthLabel.textContent =
+    `${MONTH_NAMES[viewMonth]} ${viewYear}`;
+
+  updateMainNavigation();
+  renderMainGrid(cachedPerDate);
+}
+
+
 async function loadMonthData() {
   if (!currentEventId) return;
 
   const token = ++monthLoadToken;
+  const requestedEventId = currentEventId;
 
-  monthLabel.textContent =
-    `${MONTH_NAMES[viewMonth]} ${viewYear}`;
-
-  calendarGrid.innerHTML = "";
-
-  updateMainNavigation();
+  // Al entrar a otro evento se limpia cualquier calendario anterior antes
+  // de cargar sus datos. Esto ocurre solo al cambiar de evento, no de mes.
+  if (cachedEventId !== requestedEventId) {
+    resetEventDataCache();
+    renderCurrentMonth();
+    renderBestDate(cachedPerDate);
+    renderParticipants(cachedPeople);
+  }
 
   if (!sb) {
     calendarGrid.innerHTML = `
@@ -754,21 +788,21 @@ async function loadMonthData() {
     return;
   }
 
-  // Cargamos TODA la disponibilidad del evento.
-  // Esto permite calcular la mejor fecha globalmente
-  // y conocer todos los participantes aunque estemos
-  // mirando otro mes.
+  // Se carga toda la disponibilidad una sola vez por refresco del evento.
+  // El resultado se reutiliza para cualquier mes del calendario.
   const { data, error } = await sb
     .from(AVAIL_TABLE)
     .select("person_name, date, status")
-    .eq("event_id", currentEventId)
+    .eq("event_id", requestedEventId)
     .order("date", {
       ascending: true,
     });
 
-  // Si mientras esperábamos se hizo otra petición,
-  // ignoramos esta respuesta vieja.
-  if (token !== monthLoadToken) {
+  // Ignora respuestas viejas o pertenecientes a otro evento.
+  if (
+    token !== monthLoadToken ||
+    requestedEventId !== currentEventId
+  ) {
     return;
   }
 
@@ -809,9 +843,13 @@ async function loadMonthData() {
     }
   });
 
-  renderMainGrid(perDate);
-  renderBestDate(perDate);
-  renderParticipants(people);
+  cachedPerDate = perDate;
+  cachedPeople = people;
+  cachedEventId = requestedEventId;
+
+  renderCurrentMonth();
+  renderBestDate(cachedPerDate);
+  renderParticipants(cachedPeople);
 }
 
 
@@ -824,6 +862,9 @@ function renderMainGrid(perDate) {
     viewYear,
     viewMonth
   );
+
+  const fragment =
+    document.createDocumentFragment();
 
   let maxAvail = 0;
 
@@ -845,7 +886,7 @@ function renderMainGrid(perDate) {
       cell.className =
         "day-cell empty";
 
-      calendarGrid.appendChild(cell);
+      fragment.appendChild(cell);
       return;
     }
 
@@ -875,7 +916,7 @@ function renderMainGrid(perDate) {
       cell.title =
         "Fecha fuera del rango del evento";
 
-      calendarGrid.appendChild(cell);
+      fragment.appendChild(cell);
 
       return;
     }
@@ -937,8 +978,11 @@ function renderMainGrid(perDate) {
       );
     });
 
-    calendarGrid.appendChild(cell);
+    fragment.appendChild(cell);
   });
+
+  // Reemplazo atómico del contenido para evitar un estado visual vacío.
+  calendarGrid.replaceChildren(fragment);
 }
 
 
@@ -1919,6 +1963,7 @@ saveBtn.addEventListener(
 
     saveBtn.disabled = false;
 
+    // Los datos sí cambiaron: refrescamos el cache del evento.
     await loadMonthData();
 
     setTimeout(() => {
